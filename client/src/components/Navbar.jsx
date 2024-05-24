@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import logo from "./logo-ob.png";
 
 export default function Navbar() {
   return (
@@ -7,8 +8,8 @@ export default function Navbar() {
         <NavLink to="/">
           <img
             alt="Occurrence Book Logo"
-            className="h-10 inline"
-            src="./logo-ob.jpeg"
+            className="h-12 inline"
+            src={logo}
           ></img>
         </NavLink>
 

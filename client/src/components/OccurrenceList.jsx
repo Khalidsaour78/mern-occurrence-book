@@ -10,9 +10,6 @@ const Occurrence = (props) => (
       {props.occurrence.description}
     </td>
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-      {props.occurrence.name}
-    </td>
-    <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
       {props.occurrence.fixed}
     </td>
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -93,9 +90,6 @@ export default function OccurrenceList() {
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
                   Description
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  Reported By
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
                   Fixed?

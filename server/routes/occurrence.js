@@ -26,8 +26,8 @@ router.post("/", async (req, res) => {
     let newDocument = {
       date: req.body.date,
       description: req.body.description,
-      name: req.body.name,
-      fixed: require.body.fixed,
+      //name: req.body.name,
+      fixed: req.body.fixed,
     };
     let collection = await db.collection("occurrences");
     let result = await collection.insertOne(newDocument);
@@ -46,7 +46,7 @@ router.patch("/:id", async (req, res) => {
       $set: {
         date: req.body.date,
         description: req.body.description,
-        name: req.body.name,
+        //name: req.body.name,
         fixed: require.body.fixed,
       },
     };
