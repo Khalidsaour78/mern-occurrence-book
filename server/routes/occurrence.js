@@ -1,9 +1,9 @@
 import express from "express";
-import db from "../database/dbConnection.js";
-import { ObjectId } from "mongodb";
+import db from "../database/dbConnection.js"; //For database connection
+import { ObjectId } from "mongodb"; //For changing id string to objectId
 
 const router = express.Router();
-//Listing all the occurrences
+//Listing the occurrences
 router.get("/", async (req, res) => {
   let collection = await db.collection("occurrences");
   let results = await collection.find({}).toArray();
@@ -24,10 +24,9 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     let newDocument = {
-      date: req.body.date,
-      description: req.body.description,
-      //name: req.body.name,
-      fixed: req.body.fixed,
+      date: req.body.date, //Date of the occurrence recording
+      description: req.body.description, //The occurrence
+      fixed: req.body.fixed, //Status of the occurrence
     };
     let collection = await db.collection("occurrences");
     let result = await collection.insertOne(newDocument);
