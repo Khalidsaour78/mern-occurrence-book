@@ -1,43 +1,57 @@
-import express from "express";
-import db from "../database/dbConnection.js"; //For database connection
-import { ObjectId } from "mongodb"; //For changing id string to objectId
+import express from "express"; // Importing express module
+import db from "../database/dbConnection.js"; // For database connection
+import { ObjectId } from "mongodb"; // For changing id string to objectId
 
-const router = express.Router();
-//Listing the occurrences
+const router = express.Router(); // Creating router instance
+
+// Route for listing occurrences
 router.get("/", async (req, res) => {
-  let collection = await db.collection("occurrences");
-  let results = await collection.find({}).toArray();
-  res.send(results).status(200);
-});
-
-// Get a single occurrence by id
-router.get("/:id", async (req, res) => {
-  let collection = await db.collection("occurrences");
-  let query = { _id: new ObjectId(req.params.id) };
-  let result = await collection.findOne(query);
-
-  if (!result) res.send("Not found").status(404);
-  else res.send(result).status(200);
-});
-
-// Create a new occurrence.
-router.post("/", async (req, res) => {
   try {
-    let newDocument = {
-      date: req.body.date, //Date of the occurrence recording
-      description: req.body.description, //The occurrence
-      fixed: req.body.fixed, //Status of the occurrence
-    };
     let collection = await db.collection("occurrences");
-    let result = await collection.insertOne(newDocument);
-    res.send(result).status(204);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error adding occurrence");
+    let results = await collection.find({}).toArray(); // Finding all occurrences
+    res.status(200).send(results); // Sending results with status 200
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving occurrences"); // Sending error message with status 500
   }
 });
 
-// Update occurrence by id.
+// Route for getting a single occurrence by id
+router.get("/:id", async (req, res) => {
+  try {
+    let collection = await db.collection("occurrences");
+    let query = { _id: new ObjectId(req.params.id) }; // Creating query object with provided id
+    let result = await collection.findOne(query); // Finding occurrence by id
+
+    if (!result) {
+      res.status(404).send("Occurrence not found"); // Sending error message with status 404 if occurrence not found
+    } else {
+      res.status(200).send(result); // Sending occurrence data with status 200 if found
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error retrieving occurrence"); // Sending error message with status 500
+  }
+});
+
+// Route for creating a new occurrence
+router.post("/", async (req, res) => {
+  try {
+    let newDocument = {
+      date: req.body.date,
+      description: req.body.description,
+      fixed: req.body.fixed,
+    };
+    let collection = await db.collection("occurrences");
+    let result = await collection.insertOne(newDocument); // Inserting new occurrence
+    res.status(201).send(result); // Sending result with status 201 (Created)
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error adding occurrence"); // Sending error message with status 500
+  }
+});
+
+// Route for updating occurrence by id
 router.patch("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
@@ -45,33 +59,29 @@ router.patch("/:id", async (req, res) => {
       $set: {
         date: req.body.date,
         description: req.body.description,
-        //name: req.body.name,
-        fixed: require.body.fixed,
+        fixed: req.body.fixed,
       },
     };
-
     let collection = await db.collection("occurrences");
-    let result = await collection.updateOne(query, updates);
-    res.send(result).status(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error updating occurrence");
+    let result = await collection.updateOne(query, updates); // Updating occurrence
+    res.status(200).send(result); // Sending result with status 200
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error updating occurrence"); // Sending error message with status 500
   }
 });
 
-// Delete occurrence
+// Route for deleting occurrence by id
 router.delete("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
-
     const collection = db.collection("occurrences");
-    let result = await collection.deleteOne(query);
-
-    res.send(result).status(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error deleting occurrence");
+    let result = await collection.deleteOne(query); // Deleting occurrence
+    res.status(200).send(result); // Sending result with status 200
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error deleting occurrence"); // Sending error message with status 500
   }
 });
 
-export default router;
+export default router; // Exporting router instance
