@@ -16,7 +16,7 @@ To run the Mern Occurrence Book locally or deploy it to a server, follow these s
 Clone the repository: git clone [<repository-url>](https://github.com/Khalidsaour78/mern-occurrence-book.git)
 Install dependencies: npm install (for both client and server directories)
 Set up environment variables:
-Create a .env file in the server directory and configure MongoDB URI, JWT secret, etc.
+Create a .env file in the server directory and configure MongoDB URI
 Start the server: npm start (in the server directory)
 Start the client: npm start (in the client directory)
 Access the application in your browser at http://localhost:3000
