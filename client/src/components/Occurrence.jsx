@@ -70,8 +70,8 @@ const Occurrence = () => {
   };
 
   return (
-    <>
-      <h3 className="text-lg font-semibold p-4">
+    <div>
+      <h3 className="text-lg font-mono font-bold p-4">
         Create/Update Occurrence Record
       </h3>
       <form
@@ -80,7 +80,7 @@ const Occurrence = () => {
       >
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-900/10 pb-12 md:grid-cols-2">
           <div>
-            <h2 className="text-base font-semibold leading-7 text-slate-900">
+            <h2 className="text-base font-serif font-semibold leading-7 text-slate-900">
               Occurrence Details
             </h2>
             <p className="mt-1 text-sm leading-6 text-slate-600">
@@ -100,7 +100,7 @@ const Occurrence = () => {
                   <input
                     type="date"
                     name="date"
-                    className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    className="block flex-1 border-0 bg-white py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
                     value={occurrenceData.date}
                     onChange={(e) => handleFormUpdate({ date: e.target.value })}
                   />
@@ -121,7 +121,7 @@ const Occurrence = () => {
                     type="text"
                     name="description"
                     id="description"
-                    className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    className="block flex-1 border-0 bg-white py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Describe the occurrence here"
                     value={occurrenceData.description}
                     onChange={(e) =>
@@ -134,7 +134,7 @@ const Occurrence = () => {
 
             <div>
               <fieldset className="mt-4">
-                <legend className="sr-only">Fixed? Options</legend>
+                <legend>Is the issue fixed?</legend>
                 <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
                   <div className="flex items-center">
                     <input
@@ -183,7 +183,7 @@ const Occurrence = () => {
           className="inline-flex items-center justify-center whitespace-nowrap text-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-slate-100 hover:text-accent-foreground h-9 rounded-md px-3 cursor-pointer mt-4"
         />
       </form>
-    </>
+    </div>
   );
 };
 
