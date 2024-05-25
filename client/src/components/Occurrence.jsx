@@ -1,96 +1,81 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-export default function Occurrence() {
-  const [form, setForm] = useState({
-    date: "date",
+const Occurrence = () => {
+  // State for form data
+  const [occurrenceData, setOccurrenceData] = useState({
+    date: "",
     description: "",
     fixed: "",
   });
-  const [isNew, setIsNew] = useState(true);
-  const params = useParams();
+  // State to determine if the record is new
+  const [isNewRecord, setIsNewRecord] = useState(true);
+  const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchData() {
-      const id = params.id?.toString() || undefined;
+    // Fetch occurrence data if an ID is present
+    const getOccurrence = async () => {
       if (!id) return;
-      setIsNew(false);
-      const response = await fetch(
-        `http://localhost:5050/occurrence/${params.id.toString()}`
-      );
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        console.error(message);
-        return;
-      }
-      const occurrence = await response.json();
-      if (!occurrence) {
-        console.warn(`Record with id ${id} not found`);
-        navigate("/");
-        return;
-      }
-      setForm(occurrence);
-    }
-    fetchData();
-    return;
-  }, [params.id, navigate]);
 
-  // These methods will update the state properties.
-  function updateForm(value) {
-    return setForm((prev) => {
-      return { ...prev, ...value };
-    });
-  }
+      setIsNewRecord(false);
+      try {
+        const response = await fetch(`http://localhost:5050/occurrence/${id}`);
+        if (!response.ok) {
+          console.error(`Error: ${response.statusText}`);
+          return;
+        }
+        const data = await response.json();
+        if (!data) {
+          console.warn(`No record found with ID: ${id}`);
+          navigate("/");
+          return;
+        }
+        setOccurrenceData(data);
+      } catch (error) {
+        console.error("Fetch error: ", error);
+      }
+    };
+    getOccurrence();
+  }, [id, navigate]);
 
-  // This function will handle the submission.
-  async function onSubmit(e) {
-    e.preventDefault();
-    const occurrenceRecord = { ...form };
+  // Update form state
+  const handleFormUpdate = (value) => {
+    setOccurrenceData((prevData) => ({ ...prevData, ...value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
-      let response;
-      if (isNew) {
-        // if we are adding a new occurrence we will POST to /occurrence.
-        response = await fetch("http://localhost:5050/occurrence", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(occurrenceRecord),
-        });
-      } else {
-        // if we are updating a occurrence we will PATCH to /occurrence/:id.
-        response = await fetch(
-          `http://localhost:5050/occurrence/${params.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(person),
-          }
-        );
-      }
-
+      const method = isNewRecord ? "POST" : "PATCH";
+      const endpoint = isNewRecord
+        ? "http://localhost:5050/occurrence"
+        : `http://localhost:5050/occurrence/${id}`;
+      const response = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(occurrenceData),
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
-      console.error("A problem occurred with your fetch operation: ", error);
-    } finally {
-      setForm({ date: "", description: "", name: "", fixed: "" });
+      setOccurrenceData({ date: "", description: "", fixed: "" });
       navigate("/");
+    } catch (error) {
+      console.error("Submission error: ", error);
     }
-  }
+  };
 
-  // Displaying the input form
   return (
     <>
       <h3 className="text-lg font-semibold p-4">
         Create/Update Occurrence Record
       </h3>
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         className="border rounded-lg overflow-hidden p-4"
       >
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-slate-900/10 pb-12 md:grid-cols-2">
@@ -102,7 +87,6 @@ export default function Occurrence() {
               Record the occurrence information here
             </p>
           </div>
-
           <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 ">
             <div className="sm:col-span-4">
               <label
@@ -117,9 +101,8 @@ export default function Occurrence() {
                     type="date"
                     name="date"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
-                    placeholder="Developer Advocate"
-                    value={form.date}
-                    onChange={(e) => updateForm({ date: e.target.value })}
+                    value={occurrenceData.date}
+                    onChange={(e) => handleFormUpdate({ date: e.target.value })}
                   />
                 </div>
               </div>
@@ -140,9 +123,9 @@ export default function Occurrence() {
                     id="description"
                     className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-slate-900 placeholder:text-slate-400 focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Describe the occurrence here"
-                    value={form.description}
+                    value={occurrenceData.description}
                     onChange={(e) =>
-                      updateForm({ description: e.target.value })
+                      handleFormUpdate({ description: e.target.value })
                     }
                   />
                 </div>
@@ -160,11 +143,13 @@ export default function Occurrence() {
                       type="radio"
                       value="Yes"
                       className="h-4 w-4 border-slate-300 text-slate-600 focus:ring-slate-600 cursor-pointer"
-                      checked={form.level === "Yes"}
-                      onChange={(e) => updateForm({ level: e.target.value })}
+                      checked={occurrenceData.fixed === "Yes"}
+                      onChange={(e) =>
+                        handleFormUpdate({ fixed: e.target.value })
+                      }
                     />
                     <label
-                      htmlFor="FixedYes"
+                      htmlFor="fixedYes"
                       className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4"
                     >
                       Yes
@@ -175,8 +160,10 @@ export default function Occurrence() {
                       type="radio"
                       value="No"
                       className="h-4 w-4 border-slate-300 text-slate-600 focus:ring-slate-600 cursor-pointer"
-                      checked={form.level === "No"}
-                      onChange={(e) => updateForm({ level: e.target.value })}
+                      checked={occurrenceData.fixed === "No"}
+                      onChange={(e) =>
+                        handleFormUpdate({ fixed: e.target.value })
+                      }
                     />
                     <label
                       htmlFor="fixedNo"
@@ -198,4 +185,6 @@ export default function Occurrence() {
       </form>
     </>
   );
-}
+};
+
+export default Occurrence;
